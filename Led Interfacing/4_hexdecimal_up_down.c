@@ -14,11 +14,11 @@ void main(void) {
     while(1) {
         
         for(i = 0 ; i <= 255 ; i++) {
-            P2 = (unsigned char) i;
+            P2 = i;
             delay();
         }
-        for(i = 255 ; i >= 0 ; i--) {
-            P2 = (unsigned char) i;
+        for(i = 255 ; i > 0 ; i--) {
+            P2 = i;
             delay();
         }
 

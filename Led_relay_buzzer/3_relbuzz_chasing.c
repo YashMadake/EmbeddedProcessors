@@ -1,53 +1,84 @@
-/*Write an embedded C program for interfacing button, LED, relay & buzzer as follows:
-
-a) When Switch 0 is pressed, relay and buzzer are turned ON and LEDs start chasing from left to right.
-
-b) When Switch 1 is pressed, relay and buzzer are turned OFF and LEDs start chasing from right to left.
-*/
-
 #include <p18f4550.h>
+#include "vector_relocate.h"
 
-#include <delays.h>
+#define SW0 PORTBbits.RB0
+#define SW1 PORTBbits.RB1
 
+#define RELAY LATCbits.LATC2
+#define BUZZER LATCbits.LATC3
 
-void main( ) {
-    unsigned char i;
+void msdelay(void)
+{
+    unsigned int i, j;
 
+    for(i = 0; i < 100; i++)
+    {
+        for(j = 0; j < 1275; j++)
+        {
+        }
+    }
+}
+
+void init(void)
+{
     ADCON1 = 0x0F;
 
-    TRISB = 0xFF;   // PORTD input
-    TRISD = 0x00;   // PORTD output
-    TRISC = 0x00;   // PORTD output
+    // Enable PORTB pull-ups
+    INTCON2bits.RBPU = 0;
+
+    // Switches as input
+    TRISBbits.TRISB0 = 1;
+    TRISBbits.TRISB1 = 1;
+
+    // Relay and buzzer as output
+    TRISCbits.TRISC2 = 0;
+    TRISCbits.TRISC3 = 0;
+
+    // LEDs as output
+    TRISD = 0x00;
 
     LATD = 0x00;
-    LATC = 0x00;
+    RELAY = 0;
+    BUZZER = 0;
+}
 
-    while(1) {
+void main(void)
+{
+    unsigned char i;
 
-        // Switch 0: Relay, Buzzer ON
-        // LED chasing Left to Right
-        if(PORTBbits.RB0 == 0) {
-            LATCbits.LATC0 = 1;
-            LATCbits.LATC1 = 1;
+    init();
 
-            for(i = 0 ; i < 8 ; i++) {
-                LATD = (0x01 << i);
-                Delay10KTCYx(100);
+    while(1)
+    {
+        // Switch 0: Relay ON, buzzer ON, LEDs blink
+        if(SW0 == 0)
+        {
+            RELAY = 1;
+            BUZZER = 1;
+
+            LATD = 0xFF;
+            msdelay();
+
+            LATD = 0x00;
+            msdelay();
+        }
+
+        // Switch 1: Relay OFF, buzzer OFF,
+        // LEDs chase in groups of two
+        else if(SW1 == 0)
+        {
+            RELAY = 0;
+            BUZZER = 0;
+
+            for(i = 0; i < 4; i++)
+            {
+                LATD = (0x03 << (2 * i));
+                msdelay();
             }
         }
-         // Switch 1: Relay, Buzzer OFF
-        // LED chasing Right to Left
 
-        else if(PORTBbits.RB1 == 0) {
-            LATCbits.LATC0 = 0;
-            LATCbits.LATC1 = 0;
-            
-            for(i = 0 ; i < 8 ; i++) {
-                LATD = (0x80 >> i);
-                Delay10KTCYx(100);
-            }
-        }
-        else {
+        else
+        {
             LATD = 0x00;
         }
     }

@@ -1,33 +1,66 @@
 #include <p18f4550.h>
 
-#include <delays.h>
+#define SW0 PORTCbits.RC0
+#define SW1 PORTCbits.RC1
 
-void main() {
-    unsigned char i;
+void msdelay(void)
+{
+    unsigned int i, j;
 
+    for(i = 0; i < 1000; i++)
+    {
+        for(j = 0; j < 1275; j++)
+        {
+        }
+    }
+}
+
+void init(void)
+{
     ADCON1 = 0x0F;
-    TRISB = 0xFF;   // PORTB input
+
+    // Switches as input
+    TRISCbits.TRISC0 = 1;
+    TRISCbits.TRISC1 = 1;
+
+    // LEDs as output
     TRISD = 0x00;
 
-    while(1) {
+    // Initialize LEDs OFF
+    LATD = 0x00;
+}
 
-        // switch 0 : left to right
-        if(PORTBbits.RB0 == 0) {
-            for(i= 0 ; i < 8 ; i++) {
-                LATD = (0x01 << i);
-                Delay10KTCYx(100);
-            }
-        } 
+void main(void)
+{
+    unsigned char i;
 
-        else if (PORTBbots.RB1 == 0) {
-            for(i = 0 ; i < 8 ; i++) {
-                LATD = (0x08 >> i);
-                Delay10KTCYx(200);
+    init();
+
+    while(1)
+    {
+        // Switch 0: RD0 to RD7
+        if(SW0 == 0)
+        {
+            for(i = 0; i < 8; i++)
+            {
+                LATD = (1 << i);
+                msdelay();
             }
         }
-        else {
+
+        // Switch 1: RD7 to RD0
+        else if(SW1 == 0)
+        {
+            for(i = 0; i < 8; i++)
+            {
+                LATD = (0x80 >> i);
+                msdelay();
+            }
+        }
+
+        else
+        {
             LATD = 0x00;
         }
     }
-
 }

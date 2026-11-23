@@ -1,55 +1,79 @@
-/* Write an embedded C program for interfacing button, LED, relay & buzzer as
-follows
-a) When Switch 0 is pressed relay and buzzer is turned ON and LED’s start
-blinking.
-b) When Switch 1 is pressed relay and buzzer is turned OFF and LED start chasing
-from left to right in a group o
- */
 #include <p18f4550.h>
-#include <delays.h>
+#include "vector_relocate.h"
 
-void main()
+#define SW0 PORTBbits.RB0
+#define SW1 PORTBbits.RB1
+
+#define RELAY LATCbits.LATC2
+#define BUZZER LATCbits.LATC3
+
+void msdelay(void)
+{
+    unsigned int i, j;
+
+    for(i = 0; i < 100; i++)
+    {
+        for(j = 0; j < 1275; j++)
+        {
+        }
+    }
+}
+
+void init(void)
+{
+    ADCON1 = 0x0F;
+
+    // Enable PORTB pull-ups
+    INTCON2bits.RBPU = 0;
+
+    // Switches as input
+    TRISBbits.TRISB0 = 1;
+    TRISBbits.TRISB1 = 1;
+
+    // Relay and buzzer as output
+    TRISCbits.TRISC2 = 0;
+    TRISCbits.TRISC3 = 0;
+
+    // LEDs as output
+    TRISD = 0x00;
+
+    LATD = 0x00;
+    RELAY = 0;
+    BUZZER = 0;
+}
+
+void main(void)
 {
     unsigned char i;
 
-    ADCON1 = 0x0F;
-
-    TRISB = 0xFF;
-    TRISD = 0x00;
-    TRISC = 0x00;
-
-    LATD = 0x00;
-    LATC = 0x00;
+    init();
 
     while(1)
     {
-        // Switch 0: Relay and Buzzer ON
-        // All LEDs blinking
-
-        if(PORTBbits.RB0 == 0)
+        // Switch 0: Relay ON, buzzer ON, LEDs blink
+        if(SW0 == 0)
         {
-            LATCbits.LATC0 = 1;
-            LATCbits.LATC1 = 1;
+            RELAY = 1;
+            BUZZER = 1;
 
             LATD = 0xFF;
-            Delay10KTCYx(100);
+            msdelay();
 
             LATD = 0x00;
-            Delay10KTCYx(100);
+            msdelay();
         }
 
-        // Switch 1: Relay and Buzzer OFF
-        // LEDs chasing in group of two
-
-        else if(PORTBbits.RB1 == 0)
+        // Switch 1: Relay OFF, buzzer OFF,
+        // LEDs chase in groups of two
+        else if(SW1 == 0)
         {
-            LATCbits.LATC0 = 0;
-            LATCbits.LATC1 = 0;
+            RELAY = 0;
+            BUZZER = 0;
 
             for(i = 0; i < 4; i++)
             {
-                LATD = (0x03 << (i * 2));
-                Delay10KTCYx(100);
+                LATD = (0x03 << (2 * i));
+                msdelay();
             }
         }
 

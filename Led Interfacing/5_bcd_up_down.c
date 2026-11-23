@@ -1,36 +1,43 @@
 #include <reg51.h>
 
-void delay(void) {
-    unsigned i,j;
-    for(i = 0 ; i < 100 ;i++) {
-        for(j = 0 ; j < 1275; j++) {}
+void delay(void)
+{
+    unsigned int i, j;
+
+    for (i = 0; i < 100; i++)
+    {
+        for (j = 0; j < 1275; j++)
+        {
+        }
     }
 }
 
+void main(void)
+{
+    unsigned int i;
+    unsigned char bcd;
 
-void main(void) {
-    unsigned char tens, units;
-
-    while(1) {
+    while (1)
+    {
         // UP counting
-        for(tens = 0; tens <= 9 ; tens++) {
-            for(units = 0; units <= 9 ; units++) {
-                P2 = (tens << 4) | units;
-                delay();
-            }
+        for (i = 0; i <= 99; i++)
+        {
+            bcd = ((i / 10) << 4) | (i % 10);
+
+            P2 = bcd;
+            delay();
         }
 
         // DOWN counting
-        for(tens = 9 ; ; tens--) {
-            for(units = 9 ;; units--){
-                P2 = (tens << 4) | units;
-                delay();
+        for (i = 99; i > 0; i--)
+        {
+            bcd = ((i / 10) << 4) | (i % 10);
 
-                if(units == 0) break;
-            }
-            if(tens == 0){
-                break;
-            }
+            P2 = bcd;
+            delay();
         }
+
+        P2 = 0x00;
+        delay();
     }
 }
