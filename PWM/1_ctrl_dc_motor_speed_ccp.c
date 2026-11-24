@@ -51,35 +51,35 @@ void main(void)
     while(1)
     {
         // 20% Duty Cycle
-        CCPR1L = 15;
+        CCPR1L = 0x25;
         CCP1CONbits.DC1B1 = 1;
         CCP1CONbits.DC1B0 = 0;
 
         myMsDelay(3000);
 
         // 40% Duty Cycle
-        CCPR1L = 31;
+        CCPR1L = 0x4B;
         CCP1CONbits.DC1B1 = 0;
         CCP1CONbits.DC1B0 = 1;
 
         myMsDelay(3000);
 
         // 50% Duty Cycle
-        CCPR1L = 39;
+        CCPR1L = 0x5E;
         CCP1CONbits.DC1B1 = 0;
         CCP1CONbits.DC1B0 = 0;
 
         myMsDelay(3000);
 
         // 60% Duty Cycle
-        CCPR1L = 46;
+        CCPR1L = 0x70;
         CCP1CONbits.DC1B1 = 1;
         CCP1CONbits.DC1B0 = 1;
 
         myMsDelay(3000);
 
         // 80% Duty Cycle
-        CCPR1L = 62;
+        CCPR1L = 0x96;
         CCP1CONbits.DC1B1 = 1;
         CCP1CONbits.DC1B0 = 0;
 
