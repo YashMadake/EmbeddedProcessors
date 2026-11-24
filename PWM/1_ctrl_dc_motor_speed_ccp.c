@@ -40,7 +40,7 @@ void main(void)
     TRISCbits.TRISC2 = 0;
 
     // Configure PWM period
-    PR2 = 0x4D;
+    PR2 = 0xBB;
 
     // Select PWM mode
     CCP1CON = 0x0C;
