@@ -19,26 +19,70 @@ Use a motor driver such as an H-bridge or suitable transistor driver. Do not con
 
 #include <p18f4550.h>
 
-#include <delays.h>
-
-void main() 
+void myMsDelay(unsigned int time)
 {
+    unsigned int i, j;
+
+    for(i = 0; i < time; i++)
+    {
+        for(j = 0; j < 665; j++)
+        {
+        }
+    }
+}
+
+void main(void)
+{
+    // Configure analog pins as digital
     ADCON1 = 0x0F;
 
-    TRISCbits.TRISC2 = 0;   //  CCP1 output
+    // CCP1 output
+    TRISCbits.TRISC2 = 0;
 
-    PR2 = 77;
+    // Configure PWM period
+    PR2 = 0x4D;
 
-    CCP1CON = 0x0C;     // PWM mode
+    // Select PWM mode
+    CCP1CON = 0x0C;
 
-    T2CON = 0x06;
+    // Start Timer2, prescaler 1:16
+    T2CON = 0x07;
 
-    while(1) {
-
+    while(1)
+    {
+        // 20% Duty Cycle
         CCPR1L = 15;
-        CCP1CON = 0x2C;
+        CCP1CONbits.DC1B1 = 1;
+        CCP1CONbits.DC1B0 = 0;
 
-        delay(200);
+        myMsDelay(3000);
+
+        // 40% Duty Cycle
+        CCPR1L = 31;
+        CCP1CONbits.DC1B1 = 0;
+        CCP1CONbits.DC1B0 = 1;
+
+        myMsDelay(3000);
+
+        // 50% Duty Cycle
+        CCPR1L = 39;
+        CCP1CONbits.DC1B1 = 0;
+        CCP1CONbits.DC1B0 = 0;
+
+        myMsDelay(3000);
+
+        // 60% Duty Cycle
+        CCPR1L = 46;
+        CCP1CONbits.DC1B1 = 1;
+        CCP1CONbits.DC1B0 = 1;
+
+        myMsDelay(3000);
+
+        // 80% Duty Cycle
+        CCPR1L = 62;
+        CCP1CONbits.DC1B1 = 1;
+        CCP1CONbits.DC1B0 = 0;
+
+        myMsDelay(3000);
     }
-
 }
