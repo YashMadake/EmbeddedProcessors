@@ -17,6 +17,7 @@ void msdelay(void)
 
 void init(void)
 {
+    INTCON2bits.RBPU = 0;
     ADCON1 = 0x0F;
 
     // Switches as input
